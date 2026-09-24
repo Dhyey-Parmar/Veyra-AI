@@ -135,13 +135,18 @@ export default function RiskAnalysisPage() {
               eyebrow="Portfolio Model Signals"
               description="Portfolio-wide permutation feature importance across 255,347 loans. Ranks aggregate model reliance."
             >
-              <SignalBars
-                items={featureImportance.slice(0, 5).map((f) => ({
-                  label: f.feature,
-                  weight: f.importance / featureImportance[0].importance,
-                  value: `${(f.importance * 100).toFixed(1)}%`,
-                }))}
-              />
+              {(() => {
+                const maxImp = featureImportance[0]?.importance || 1
+                return (
+                  <SignalBars
+                    items={featureImportance.slice(0, 5).map((f) => ({
+                      label: f.feature,
+                      weight: f.importance / maxImp,
+                      value: `${(f.importance * 100).toFixed(1)}%`,
+                    }))}
+                  />
+                )
+              })()}
               <p className="mt-3 text-[11px] text-muted-ink">
                 Note: Global feature importance reflects portfolio-wide feature sensitivity and provides architectural context alongside individual applicant factors.
               </p>

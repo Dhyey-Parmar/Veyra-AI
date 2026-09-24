@@ -18,7 +18,7 @@ import { ChartPanel } from '@/components/analytics/ChartPanel'
 import { PerformanceTable } from '@/components/analytics/PerformanceTable'
 import { ConfusionMatrix } from '@/components/analytics/ConfusionMatrix'
 import { formatMetric } from '@/lib/format'
-import { api, type MetricsResponse, type ModelDetailsResponse } from '@/services/api'
+import { api, type MetricsResponse, type ModelDetailsResponse, type ModelComparisonRow } from '@/services/api'
 import {
   confusionMatrix as defaultConfusionMatrix,
   modelComparison as defaultModelComparison,
@@ -61,19 +61,26 @@ export default function IntelligencePage() {
     prAuc: metrics?.test_metrics?.pr_auc ?? defaultPerformance.prAuc,
   }
 
-  const tableRows: ModelRow[] = (metrics?.model_comparison && metrics.model_comparison.length > 0
-    ? metrics.model_comparison
-    : defaultModelComparison
-  ).map((r: any) => ({
-    model: r.Model ?? r.model,
-    accuracy: Number(r.Accuracy ?? r.accuracy),
-    precision: Number(r.Precision ?? r.precision),
-    recall: Number(r.Recall ?? r.recall),
-    f1: Number(r.F1_Score ?? r.f1),
-    rocAuc: Number(r.ROC_AUC ?? r.rocAuc),
-    prAuc: Number(r.PR_AUC ?? r.prAuc),
-    best: Boolean(r.best ?? (r.Model && r.Model.includes('HistGradientBoosting'))),
-  }))
+  const rawRows: (ModelComparisonRow | ModelRow)[] =
+    metrics?.model_comparison && metrics.model_comparison.length > 0
+      ? metrics.model_comparison
+      : defaultModelComparison
+
+  const tableRows: ModelRow[] = rawRows.map((r) => {
+    const isApiRow = 'Model' in r
+    return {
+      model: isApiRow ? r.Model : r.model,
+      accuracy: Number(isApiRow ? r.Accuracy : r.accuracy),
+      precision: Number(isApiRow ? r.Precision : r.precision),
+      recall: Number(isApiRow ? r.Recall : r.recall),
+      f1: Number(isApiRow ? r.F1_Score : r.f1),
+      rocAuc: Number(isApiRow ? r.ROC_AUC : r.rocAuc),
+      prAuc: Number(isApiRow ? r.PR_AUC : r.prAuc),
+      best: Boolean(
+        r.best ?? (isApiRow ? r.Model.includes('HistGradientBoosting') : r.model.includes('HistGradientBoosting')),
+      ),
+    }
+  })
 
   const cmData = metrics?.confusion_matrix ?? defaultConfusionMatrix
   const rocData = metrics?.roc_curve && metrics.roc_curve.length > 0 ? metrics.roc_curve : defaultRocCurve

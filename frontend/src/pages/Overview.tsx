@@ -29,6 +29,20 @@ import {
   riskDistribution as defaultRisk,
 } from '@/lib/reference-data'
 
+type DonutItem = {
+  label: string
+  value: number
+  share: number
+}
+
+type RiskBandItem = {
+  band: string
+  range: string
+  count: number
+  share: number
+  fill: string
+}
+
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
@@ -74,7 +88,7 @@ export default function Overview() {
       ? insights.class_distribution.non_default_percentage / 100
       : defaultDataset.nonDefaultRate
 
-  const defaultDonutData = insights?.class_distribution
+  const defaultDonutData: DonutItem[] = insights?.class_distribution
     ? [
         {
           label: 'No Default',
@@ -89,7 +103,7 @@ export default function Overview() {
       ]
     : defaultDist
 
-  const riskBandsData = insights?.risk_distribution ?? defaultRisk
+  const riskBandsData: RiskBandItem[] = insights?.risk_distribution ?? defaultRisk
 
   return (
     <div className="pb-24">
@@ -213,7 +227,7 @@ export default function Overview() {
   )
 }
 
-function DefaultDonut({ data }: { data: typeof defaultDist }) {
+function DefaultDonut({ data }: { data: DonutItem[] }) {
   const total = data.reduce((s, d) => s + d.value, 0)
   const colors = ['var(--teal)', 'var(--danger)']
   return (
@@ -232,7 +246,7 @@ function DefaultDonut({ data }: { data: typeof defaultDist }) {
               paddingAngle={2}
             >
               {data.map((_, i) => (
-                <Cell key={i} fill={colors[i]} />
+                <Cell key={i} fill={colors[i % colors.length]} />
               ))}
             </Pie>
           </PieChart>
@@ -248,7 +262,7 @@ function DefaultDonut({ data }: { data: typeof defaultDist }) {
         {data.map((d, i) => (
           <li key={d.label} className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-2 text-sm text-ink">
-              <span className="size-2.5 rounded-full" style={{ backgroundColor: colors[i] }} />
+              <span className="size-2.5 rounded-full" style={{ backgroundColor: colors[i % colors.length] }} />
               {d.label}
             </span>
             <span className="tabular text-sm font-medium text-muted-ink">{formatPercent(d.share)}</span>
@@ -259,7 +273,7 @@ function DefaultDonut({ data }: { data: typeof defaultDist }) {
   )
 }
 
-function RiskBands({ data }: { data: typeof defaultRisk }) {
+function RiskBands({ data }: { data: RiskBandItem[] }) {
   return (
     <ResponsiveContainer width="100%" height={190}>
       <BarChart data={data} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
@@ -270,7 +284,7 @@ function RiskBands({ data }: { data: typeof defaultRisk }) {
           tickLine={false}
         />
         <YAxis
-          tickFormatter={(v) => formatCompact(v)}
+          tickFormatter={(v: number | string) => formatCompact(Number(v))}
           tick={{ fontSize: 11, fill: 'var(--muted-ink)' }}
           axisLine={false}
           tickLine={false}

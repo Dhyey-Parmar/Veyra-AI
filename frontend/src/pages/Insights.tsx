@@ -49,7 +49,10 @@ export default function InsightsPage() {
     }
   }, [])
 
-  const classDist = insights?.class_distribution
+  type DistItem = { label: string; value: number; share: number }
+  type BucketItem = { bucket: string; count: number; rate: number }
+
+  const classDist: DistItem[] = insights?.class_distribution
     ? [
         {
           label: 'No Default',
@@ -66,7 +69,7 @@ export default function InsightsPage() {
 
   const total = classDist.reduce((s, d) => s + d.value, 0)
 
-  const scoreBuckets =
+  const scoreBuckets: BucketItem[] =
     insights?.default_rate_by_score && insights.default_rate_by_score.length > 0
       ? insights.default_rate_by_score
       : defaultScoreBuckets
@@ -155,14 +158,14 @@ export default function InsightsPage() {
                     axisLine={{ stroke: 'var(--color-hairline)' }}
                   />
                   <YAxis
-                    tickFormatter={(v) => `${Math.round(v * 100)}%`}
+                    tickFormatter={(v: number | string) => `${Math.round(Number(v) * 100)}%`}
                     tick={axisTick}
                     tickLine={false}
                     axisLine={false}
                   />
                   <Tooltip content={<RateTooltip />} cursor={{ fill: 'var(--color-secondary)' }} />
                   <Bar dataKey="rate" radius={[4, 4, 0, 0]} maxBarSize={40} animationDuration={900}>
-                    {scoreBuckets.map((entry, i) => (
+                    {scoreBuckets.map((entry: BucketItem, i: number) => (
                       <Cell
                         key={i}
                         fill={

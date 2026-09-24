@@ -3,7 +3,9 @@ import { cn } from '@/lib/utils'
 import { formatMetric } from '@/lib/format'
 import type { ModelRow } from '@/lib/reference-data'
 
-const COLUMNS: { key: keyof ModelRow; label: string }[] = [
+type MetricColumnKey = 'accuracy' | 'precision' | 'recall' | 'f1' | 'rocAuc' | 'prAuc'
+
+const COLUMNS: { key: MetricColumnKey; label: string }[] = [
   { key: 'accuracy', label: 'Accuracy' },
   { key: 'precision', label: 'Precision' },
   { key: 'recall', label: 'Recall' },
@@ -13,9 +15,16 @@ const COLUMNS: { key: keyof ModelRow; label: string }[] = [
 ]
 
 export function PerformanceTable({ rows }: { rows: ModelRow[] }) {
-  const bestByCol: Record<string, number> = {}
+  const bestByCol: Record<MetricColumnKey, number> = {
+    accuracy: 0,
+    precision: 0,
+    recall: 0,
+    f1: 0,
+    rocAuc: 0,
+    prAuc: 0,
+  }
   for (const col of COLUMNS) {
-    bestByCol[col.key] = Math.max(...rows.map((r) => (r[col.key] as number) || 0))
+    bestByCol[col.key] = Math.max(...rows.map((r) => r[col.key] ?? 0))
   }
 
   return (
@@ -51,7 +60,7 @@ export function PerformanceTable({ rows }: { rows: ModelRow[] }) {
                 </span>
               </td>
               {COLUMNS.map((col) => {
-                const val = (row[col.key] as number) || 0
+                const val = row[col.key] ?? 0
                 const isBest = Math.abs(val - bestByCol[col.key]) < 0.0001
                 return (
                   <td
