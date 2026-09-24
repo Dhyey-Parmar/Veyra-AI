@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+
+  --background: #f7f8f6;
+  --surface: #ffffff;
+  --foreground: #17202a;
+  --card: #ffffff;
+  --card-foreground: #17202a;
+  --popover: #ffffff;
+  --popover-foreground: #17202a;
+
+  --primary: #102a43;
+  --primary-foreground: #f7f8f6;
+  --secondary: #eef1ee;
+  --secondary-foreground: #102a43;
+  --muted: #eef1ee;
+  --muted-foreground: #667085;
+  --accent: #2563eb;
+  --accent-foreground: #ffffff;
+  --destructive: #dc4a4a;
+  --destructive-foreground: #ffffff;
+
+  --border: #e4e7e2;
+  --hairline: #e4e7e2;
+  --input: #d9ddd6;
+  --ring: #2563eb;
+
+  /* Brand tokens */
+  --ink: #17202a;
+  --muted-ink: #667085;
+  --brand: #102a43;
+  --brand-accent: #2563eb;
+  --teal: #0f766e;
+  --danger: #dc4a4a;
+  --warning: #d89b2b;
+
+  --chart-1: #2563eb;
+  --chart-2: #0f766e;
+  --chart-3: #102a43;
+  --chart-4: #d89b2b;
+  --chart-5: #dc4a4a;
+
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .label-eyebrow {
+    @apply text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-muted-ink;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .hairline-grid {
+    background-image: linear-gradient(to right, var(--hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--hairline) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
