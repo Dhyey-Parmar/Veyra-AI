@@ -29,6 +29,7 @@ if frontend_url:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=r"^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
@@ -37,6 +38,7 @@ app.add_middleware(
 # Lightweight health endpoints
 @app.get("/health")
 @app.get("/api/health")
+@app.get("/api")
 async def health_check():
     return {"status": "ok"}
 

@@ -28,6 +28,11 @@ def test_endpoints():
     assert res2.json() == {"status": "ok"}
     print("  [PASS] GET /health ->", res2.json())
 
+    res3 = client.get("/api")
+    assert res3.status_code == 200, f"/api failed: {res3.status_code} {res3.text}"
+    assert res3.json() == {"status": "ok"}
+    print("  [PASS] GET /api ->", res3.json())
+
     print("\n--- 2. Testing Model Details Endpoints ---")
     res = client.get("/api/model-details")
     assert res.status_code == 200, f"/api/model-details failed: {res.status_code}"
