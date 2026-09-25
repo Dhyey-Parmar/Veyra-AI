@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "functions": {
@@ -10,15 +11,15 @@
   },
   "rewrites": [
     {
-      "source": "/api",
-      "destination": "/api/index.py"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/index.py"
     },
     {
-      "source": "/((?!api).*)",
+      "source": "/api",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

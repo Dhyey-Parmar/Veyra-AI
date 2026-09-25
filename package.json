@@ -5,7 +5,10 @@
   "description": "Veyra - Intelligent Credit Risk Analytics",
   "scripts": {
     "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build",
+    "build": "cd frontend && npm install && npm run build",
     "preview": "npm --prefix frontend run preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.14"
   }
 }
