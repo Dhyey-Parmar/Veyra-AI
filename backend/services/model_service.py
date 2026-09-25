@@ -6,11 +6,12 @@ import pandas as pd
 
 # Resolve PROJECT_ROOT reliably using file location with fallback to cwd
 CURRENT_FILE = Path(__file__).resolve()
-# backend/services/model_service.py -> parent is backend/services -> parent is backend -> parent is root
 PROJECT_ROOT = CURRENT_FILE.parent.parent.parent
-
-if not (PROJECT_ROOT / "models").exists() and (Path.cwd() / "models").exists():
-    PROJECT_ROOT = Path.cwd()
+if not (PROJECT_ROOT / "models").exists():
+    if (CURRENT_FILE.parent.parent / "models").exists():
+        PROJECT_ROOT = CURRENT_FILE.parent.parent
+    elif (Path.cwd() / "models").exists():
+        PROJECT_ROOT = Path.cwd()
 
 MODELS_DIR = PROJECT_ROOT / "models"
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"

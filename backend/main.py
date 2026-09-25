@@ -1,5 +1,21 @@
 import os
+import sys
+import types
 from pathlib import Path
+
+# Ensure 'backend' is importable whether running from project root or inside backend service root
+_CURRENT_DIR = Path(__file__).resolve().parent
+_PROJECT_ROOT = _CURRENT_DIR.parent
+
+for _p in [str(_CURRENT_DIR), str(_PROJECT_ROOT)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+if "backend" not in sys.modules:
+    backend_pkg = types.ModuleType("backend")
+    backend_pkg.__path__ = [str(_CURRENT_DIR)]
+    sys.modules["backend"] = backend_pkg
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -57,8 +73,11 @@ app.include_router(insights.router)
 # Mount diagnostic plots static directory if available
 CURRENT_FILE = Path(__file__).resolve()
 PROJECT_ROOT = CURRENT_FILE.parent.parent
-if not (PROJECT_ROOT / "artifacts").exists() and (Path.cwd() / "artifacts").exists():
-    PROJECT_ROOT = Path.cwd()
+if not (PROJECT_ROOT / "artifacts").exists():
+    if (CURRENT_FILE.parent / "artifacts").exists():
+        PROJECT_ROOT = CURRENT_FILE.parent
+    elif (Path.cwd() / "artifacts").exists():
+        PROJECT_ROOT = Path.cwd()
 
 PLOTS_DIR = PROJECT_ROOT / "artifacts" / "plots"
 if PLOTS_DIR.exists():
